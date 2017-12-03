@@ -1,6 +1,6 @@
 import sys
 import pygame
-import math 
+import dimensions as dm
 
 pygame.init()
 screen = pygame.display.set_mode((1000,800))
@@ -19,21 +19,23 @@ class Hand:
         self.image = pygame.image.load("hand.png").convert_alpha()
         self.position = Pair(mouse[0], mouse[1])
         self.speed = 50
-        self.hitbox = pygame.Rect(mouse[0], mouse[1], 200, 293)
-    def display(self):
-        screen.blit(self.image, mouse)
+        self.hitbox = pygame.Rect(self.position.x, self.position.y, dm.hand_width, dm.hand_height)
+    def display(self, x_pos, y_pos):
+        screen.blit(self.image, (x_pos-(dm.hand_width/2), y_pos-(dm.hand_height/2)))
   #  def move(self):
 
         
 hand = Hand()
 while True:
+    mouse_x, mouse_y = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.display.quit()
             sys.exit()
+
     screen.fill((0))
     
    # hand.move()
-    hand.display()
+    hand.display(mouse_x, mouse_y)
     
     pygame.display.update()
