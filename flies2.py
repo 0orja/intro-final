@@ -22,6 +22,15 @@ class Hand:
         self.hitbox = pygame.Rect(self.position.x, self.position.y, dm.hand_width, dm.hand_height)
     def display(self, x_pos, y_pos):
         screen.blit(self.image, (x_pos-(dm.hand_width/2), y_pos-(dm.hand_height/2)))
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+        
+
   #  def move(self):
 
         
@@ -32,10 +41,15 @@ while True:
         if event.type == pygame.QUIT:
             pygame.display.quit()
             sys.exit()
+            
+    BackGround = Background('background_image.png', [0,0])
+    
 
     screen.fill((0))
+
+    screen.blit(BackGround.image, BackGround.rect)
     
    # hand.move()
     hand.display(mouse_x, mouse_y)
-    
+
     pygame.display.update()
