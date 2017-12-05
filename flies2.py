@@ -14,6 +14,7 @@ class Pair:
         new_x = self.x + other.x
         new_y = self.y + other.y
         return Pair(new_x, new_y)
+
 class Hand:
     def __init__(self):
         self.image = pygame.image.load("hand.png").convert_alpha()
@@ -25,11 +26,26 @@ class Hand:
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
-        
+
+"""class flybaby:
+    def __init__(self,velocity):
+        self.image = pygame.image.load("flybaby.png").convert_alpha()
+        self.velocity = velocity
+        self.hitbox = pygame.Rect(self.position.x, self.position.y, dm.flybaby_width, dm.flybaby_height)
+    def move(self, surface):
+        self.image.move_ip(self.velocity.x, self.velocity.y)
+        if self.image.right > surface.get_width() or self.image.left < 0:
+            self.velocity.x = -self.velocity.x
+        if self.image.top < 0:
+            self.velocity.y = - self.velocity.y
+    def display(self):
+        screen.blit(self.image, (x_pos-(dm.hand_width/2), y_pos-(dm.hand_height/2)))"""
+
+
 
   #  def move(self):
 
