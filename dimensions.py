@@ -1,2 +1,2 @@
-hand_height = 258
-hand_width = 177
+hand_height = 124
+hand_width = 85
