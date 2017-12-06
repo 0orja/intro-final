@@ -1,3 +1,10 @@
+import pygame
+import dimensions as dm
+
+screen = pygame.display.set_mode((1000,800))
+mouse = pygame.mouse.get_pos()
+
+pygame.init()
 class Pair:
     def __init__(self, x, y):
         self.x = x

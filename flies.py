@@ -4,11 +4,9 @@ import dimensions as dm
 import classes
 
 pygame.init()
-screen = pygame.display.set_mode((1000,800))
-mouse = pygame.mouse.get_pos()
 
 
-hand = Hand()
+hand = classes.Hand()
 while True:
     mouse_x, mouse_y = pygame.mouse.get_pos()
     for event in pygame.event.get():
@@ -16,7 +14,7 @@ while True:
             pygame.display.quit()
             sys.exit()
 
-    screen.fill((0))
+    classes.screen.fill((0))
 
    # hand.move()
     hand.display(mouse_x, mouse_y)
