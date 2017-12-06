@@ -9,6 +9,7 @@ mouse = pygame.mouse.get_pos()
 
 hand = classes.Hand()
 pizza = classes.Food("pizza.png")
+f = classes.Fly()
 while True:
     mouse_x, mouse_y = pygame.mouse.get_pos()
     for event in pygame.event.get():
@@ -20,6 +21,12 @@ while True:
 
    # hand.move()
     hand.display(mouse_x, mouse_y)
+    hand.position = classes.Pair(mouse_x, mouse_y)
     pizza.display()
+    f.display()
+    f.move()
+#    if f.hitbox.colliderect(hand.hitbox):
+#        f.velocity.x = -f.velocity.x
+#        f.velocity.y = -f.velocity.y
 
     pygame.display.update()

@@ -21,11 +21,13 @@ class Hand:
     def __init__(self):
         self.image = pygame.image.load("hand.png").convert_alpha()
         self.position = Pair(mouse[0], mouse[1])
-        self.speed = 50
         self.dimensions = Pair(dm.hand["width"], dm.hand["height"])
         self.hitbox = pygame.Rect(self.position.x, self.position.y, self.dimensions.x, self.dimensions.y)
     def display(self, x_pos, y_pos):
         screen.blit(self.image, (x_pos-(dm.hand["width"]/2), y_pos-(dm.hand["height"]/2)))
+#        pygame.draw.rect(screen, (255,255,255), self.hitbox)
+#    def move():
+#        self.position = Pair
 class Food:
     def __init__(self, foodtype):
         self.foodtype = foodtype
@@ -35,3 +37,21 @@ class Food:
         self.hitbox = pygame.Rect(self.position.x, self.position.y, self.dimensions.x, self.dimensions.y)
     def display(self):
         screen.blit(self.image, (self.position.x, self.position.y))
+
+        #screen.blit(self.hitbox, (self.position.x, self.position.y))
+class Fly:
+    def __init__(self):
+        self.image = pygame.image.load("flybaby.png").convert_alpha()
+        self.position = Pair(random.randint(0,w), random.randint(0,h))
+        self.velocity = Pair(random.randint(1,10), random.randint(1,10))
+        self.dimensions = Pair(dm.fly["width"], dm.fly["height"])
+        self.hitbox = pygame.Rect(self.position.x, self.position.y, self.dimensions.x, self.dimensions.y)
+    def display(self):
+        screen.blit(self.image, (self.position.x, self.position.y))
+    def move(self):
+        self.position += self.velocity
+        self.hitbox.move_ip(self.velocity.x, self.velocity.y)
+        if self.hitbox.right > w or self.hitbox.left < 0:
+            self.velocity.x = -self.velocity.x
+        if self.hitbox.top < 0 or self.hitbox.bottom > h:
+            self.velocity.y = - self.velocity.y
