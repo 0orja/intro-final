@@ -7,7 +7,7 @@ screen = pygame.display.set_mode((800,600))
 mouse = pygame.mouse.get_pos()
 h = screen.get_height()
 w = screen.get_width()
-
+mouse_x = mouse[]
 pygame.init()
 class Pair:
     def __init__(self, x, y):
@@ -25,9 +25,9 @@ class Hand:
         self.hitbox = pygame.Rect(self.position.x, self.position.y, self.dimensions.x, self.dimensions.y)
     def display(self, x_pos, y_pos):
         screen.blit(self.image, (x_pos-(dm.hand["width"]/2), y_pos-(dm.hand["height"]/2)))
-#        pygame.draw.rect(screen, (255,255,255), self.hitbox)
-#    def move():
-#        self.position = Pair
+        pygame.draw.rect(screen, (255,255,255), self.hitbox)
+    def move(self):
+        self.position = Pair(mouse_x, mouse_y)
 class Food:
     def __init__(self, foodtype):
         self.foodtype = foodtype

@@ -1,7 +1,7 @@
 # hand
 hand = {
-"width": 124,
-"height": 100,
+"width": 85,
+"height": 124,
 "img": "hand.png"}
 
 # pizza
