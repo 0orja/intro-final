@@ -3,13 +3,13 @@ import pygame
 import dimensions as dm
 
 pygame.init()
-screen = pygame.display.set_mode((1000,800))
+screen = pygame.display.set_mode((1000,650))
 mouse = pygame.mouse.get_pos()
 
 class Pair:
     def __init__(self, x, y):
         self.x = x
-        self.y = y 
+        self.y = y
     def __add__(self, other):
         new_x = self.x + other.x
         new_y = self.y + other.y
@@ -49,7 +49,7 @@ class Background(pygame.sprite.Sprite):
 
   #  def move(self):
 
-        
+
 hand = Hand()
 while True:
     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -57,14 +57,14 @@ while True:
         if event.type == pygame.QUIT:
             pygame.display.quit()
             sys.exit()
-            
+
     BackGround = Background('background_image.png', [0,0])
-    
+
 
     screen.fill((0))
 
     screen.blit(BackGround.image, BackGround.rect)
-    
+
    # hand.move()
     hand.display(mouse_x, mouse_y)
 
