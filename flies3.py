@@ -46,31 +46,46 @@ class PizzaGuy:
         pygame.draw.rect(screen, (255,255,255), self.hitbox)
     def move(self):
         self.position = Pair(mouse_x, mouse_y)
-class Gun: #need to fix shoot function
+class Gun: 
     def __init__(self):
         self.sheet = [pygame.image.load("gun-1.png"),pygame.image.load("gun-2.png")]
         self.ani_pos = 0
         self.image = self.sheet[self.ani_pos]
         self.position = Pair(mouse_x, mouse_y)
-        self.ani_speed = 30
+        self.ani_speed = 10
         self.hitbox = pygame.Rect(self.position.x, self.position.y, gun_dm["width"], gun_dm["height"])
     def update(self):
         self.position = Pair(pygame.mouse.get_pos()[0], pygame.mouse.get_pos[1])
-    def display(self, x, y):
+    def idle(self, x, y):
+        self.image = self.sheet[0]
         screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
+        print("no")
     def shoot(self, x, y):
+        #self.ani_speed -= 5
+        #if self.ani_speed == 0:
         self.ani_speed -= 1
-        if self.ani_speed == 0:
-                self.image = self.sheet[1] #
-        self.ani_speed = 30
-        self.display(x, y)
+        while self.ani_speed:
+            self.image = self.sheet[1] #
+            screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
+        self.idle(x, y)
+        print("yes")
+    def display(self, x, y, status):
+        self.status = status
+        if self.status == "shoot":
+            self.image = self.sheet[1]
+            screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
+        if self.status == "idle":
+            self.image = self.sheet[0]
+            screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
+
+
 class Fly:
     def __init__(self):
         self.sheet = [pygame.image.load("fly-1.png"), pygame.image.load("fly-2.png"), pygame.image.load("fly-3.png"), pygame.image.load("fly-4.png")]
         self.dead = pygame.image.load("fly-dead.png")
         self.ani_pos = 0
         self.image = self.sheet[self.ani_pos]
-        self.ani_speed = 10
+        self.ani_speed = 5
         self.position = Pair(random.randint(0,w), random.randint(0,h))
         self.velocity = Pair(random.randint(1,5), random.randint(1,5))
         self.dimensions = Pair(fly_dm["width"], fly_dm["height"])
@@ -113,15 +128,17 @@ while True:
         if event.type == pygame.QUIT:
             pygame.display.quit()
             sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            gun.shoot(x, y)
-    marketplace = Background("marketplace.png", [0,0])
-
-
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            gun.display(x, y, "shoot")
+#        event.type == pygame.MOUSEBUTTONUP:
+#            gun.idle(x, y)
+    #marketplace = Background("marketplace.png", [0,0])
+#    click = pygame.mouse.get_pressed()
+#    if click[0]:
+    gun.display(x, y, "idle")
 
 
    # hand.move()
-    gun.display(x, y)
     #gun.shoot(x, y)
     f.display()
     f.move()
