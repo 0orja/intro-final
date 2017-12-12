@@ -46,16 +46,18 @@ class PizzaGuy:
         pygame.draw.rect(screen, (255,255,255), self.hitbox)
     def move(self):
         self.position = Pair(mouse_x, mouse_y)
-class Gun: 
+class Gun:
     def __init__(self):
         self.sheet = [pygame.image.load("gun-1.png"),pygame.image.load("gun-2.png")]
         self.ani_pos = 0
         self.image = self.sheet[self.ani_pos]
         self.position = Pair(mouse_x, mouse_y)
         self.ani_speed = 10
-        self.hitbox = pygame.Rect(self.position.x, self.position.y, gun_dm["width"], gun_dm["height"])
+        self.muzzle = pygame.Rect(pygame.mouse.get_pos()[0]-(gun_dm["width"]/2)+23, pygame.mouse.get_pos()[1]-(gun_dm["height"]/2)+26, 22, 36)
+        #self.hitbox = pygame.Rect(self.position.x, self.position.y, gun_dm["width"], gun_dm["height"])
     def update(self):
-        self.position = Pair(pygame.mouse.get_pos()[0], pygame.mouse.get_pos[1])
+        self.position = Pair(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+        self.muzzle = pygame.Rect(pygame.mouse.get_pos()[0]-(gun_dm["width"]/2)+23, pygame.mouse.get_pos()[1]-(gun_dm["height"]/2)+26, 22, 36)
     def idle(self, x, y):
         self.image = self.sheet[0]
         screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
@@ -74,11 +76,10 @@ class Gun:
         if self.status == "shoot":
             self.image = self.sheet[1]
             screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
+            # add sound
         if self.status == "idle":
             self.image = self.sheet[0]
             screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
-
-
 class Fly:
     def __init__(self):
         self.sheet = [pygame.image.load("fly-1.png"), pygame.image.load("fly-2.png"), pygame.image.load("fly-3.png"), pygame.image.load("fly-4.png")]
@@ -119,10 +120,12 @@ class Background(pygame.sprite.Sprite): #make backgrounds blurred or darker
         screen.blit(self.image, self.rect)
 f = Fly()
 gun = Gun()
-
+def hit():
+    f.die()
 while True:
     screen.fill((0))
-    clock.tick(60)
+    clock.tick(100)
+    marketplace = Background("marketplace.png", [0,0])
     x, y = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -130,17 +133,18 @@ while True:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             gun.display(x, y, "shoot")
-#        event.type == pygame.MOUSEBUTTONUP:
-#            gun.idle(x, y)
-    #marketplace = Background("marketplace.png", [0,0])
-#    click = pygame.mouse.get_pressed()
-#    if click[0]:
+            shot = True
+
     gun.display(x, y, "idle")
+    gun.update()
+    pygame.draw.rect(screen, ((255)), gun.muzzle)
+    shot = False
 
 
    # hand.move()
     #gun.shoot(x, y)
     f.display()
     f.move()
-
+    if gun.muzzle.colliderect(f.hitbox) and shot:
+        print("collide")
     pygame.display.update()
