@@ -21,12 +21,17 @@ gun_dm = {
 "width": 138,
 "height": 141
 }
+pygame.init()
+pygame.mixer.init()
 screen = pygame.display.set_mode((800,600))
 clock = pygame.time.Clock()
 h = screen.get_height()
 w = screen.get_width()
 mouse_x, mouse_y = pygame.mouse.get_pos()
-pygame.init()
+miss_sound = pygame.mixer.Sound("miss.wav")
+hit_sound = pygame.mixer.Sound("shotgun.wav")
+pygame.mixer.music.load("theme.wav")
+pygame.mixer.music.play(-1)
 class Pair:
     def __init__(self, x, y):
         self.x = x
@@ -117,9 +122,10 @@ class Fly:
         self.alive = False
         self.image = self.dead
         self.velocity = Pair(0,0)
+        pygame.mixer.Sound.play(hit_sound)
     def update(self):
         screen.blit(self.image, self.hitbox.topleft)
-class Background(pygame.sprite.Sprite): #make backgrounds blurred or darker
+class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(image_file)
@@ -130,18 +136,29 @@ flies = []
 gun = Gun()
 score = 0
 font = pygame.font.Font("rocksalt.ttf", 36)
+start = 2000
+finished = False
+level = 1
 while True:
     screen.fill((0))
-    #clock.tick(200)
-    marketplace = Background("marketplace.png", [0,0])
+    clock.tick(200)
+    start -= 1
+    if start <= 0:
+        finished = True
+    if level == 1:
+        background = Background("marketplace.png", [0,0])
+    elif level == 2:
+        background = Background("outdoor.png", [0,0])
     x, y = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            finished = True
             pygame.display.quit()
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             gun.display(x, y, "shoot")
             shot = True
+            pygame.mixer.Sound.play(miss_sound)
             gun.ani_speed -= 1
             if gun.ani_speed == 0:
                 shot = False
@@ -149,6 +166,7 @@ while True:
                 break
         else:
             shot = False
+
     text = font.render("Score: "+str(score), True, (255,255,255))
     screen.blit(text, (30,30))
     if not random.randrange(20):
@@ -168,6 +186,7 @@ while True:
     flies = alive
     gun.display(x, y, "idle")
     gun.update()
-
+    #if level cleared:
+        #level += 1
 
     pygame.display.update()
