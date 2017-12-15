@@ -46,16 +46,17 @@ class Button:
         self.w= w
         self.h= h
         self.font = pygame.font.Font("gochi.ttf",40)
-        self.color = (255,255,255)
+        self.color = (135,113,109)
         self.text = text
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
     def display(self):
-        text = self.font.render(self.text, True, (0,0,0))
+        text = self.font.render(self.text, True, (255,255,255))
         x_pos = self.x + 5
-        y_pos = self.y
+        y_pos = self.y + 4
         pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(text, (x_pos, y_pos))
-#    def clicked(self):
+    def clicked(self):
+        finished = False
 
 class Pair:
     def __init__(self, x, y):
@@ -179,10 +180,6 @@ class Cat:
     #def update(self):
         #screen.blit(self.image, self.hitbox.topleft)
 
-def gameOver():
-    global finished
-    finished = True
-
 flies = []
 cats = []
 gun = Gun()
@@ -229,7 +226,6 @@ while True:
             if c.alive == True and c.position.x <= w:
                 onscreen.append(c)
         cats = onscreen
-            #gameOver()
         if not random.randrange(20):
             f = Fly()
             flies.append(f)
@@ -256,6 +252,8 @@ while True:
         screen.blit(scared_cat, (0,100))
         screen.blit(losemessage, (300,150))
         screen.blit(text, (320,200))
-        restart_button = Button(310, 50, 210, 60, "Play again!")
-        restart_button.display()
+        key = pygame.key.get_pressed()
+        if key[pygame.K_SPACE]:
+            score = 0
+            finished = False
     pygame.display.update()
