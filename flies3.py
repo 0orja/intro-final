@@ -51,7 +51,7 @@ class Button:
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
     def display(self):
         text = self.font.render(self.text, True, (0,0,0))
-        x_pos = self.x
+        x_pos = self.x + 5
         y_pos = self.y
         pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(text, (x_pos, y_pos))
@@ -195,7 +195,6 @@ level = 2
 while True:
     screen.fill((0))
     clock.tick(200)
-    print(finished)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.display.quit()
