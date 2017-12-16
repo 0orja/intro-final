@@ -28,6 +28,7 @@ cat_dm = {
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((800,600))
+pygame.display.set_caption("Flybusters")
 clock = pygame.time.Clock()
 h = screen.get_height()
 w = screen.get_width()
@@ -35,8 +36,11 @@ mouse_x, mouse_y = pygame.mouse.get_pos()
 miss_sound = pygame.mixer.Sound("miss.wav")
 hit_sound = pygame.mixer.Sound("shotgun.wav")
 cat_sound = pygame.mixer.Sound("cat.wav")
+click_sound = pygame.mixer.Sound("click.wav")
 pygame.mixer.music.load("theme.wav")
-
+button_font = pygame.font.Font("gochi.ttf", 40)
+big_font = pygame.font.Font("rocksalt.ttf", 40)
+small_font = pygame.font.Font("gochi.ttf", 24)
 pygame.mixer.music.play(-1)
 
 class Button:
@@ -45,19 +49,24 @@ class Button:
         self.y= y
         self.w= w
         self.h= h
-        self.font = pygame.font.Font("gochi.ttf",40)
-        self.color = (135,113,109)
+        self.color = (255,255,255)
         self.text = text
         self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
+        self.border = pygame.Rect(self.x-5, self.y-5, self.w+10, self.h+10)
     def display(self):
-        text = self.font.render(self.text, True, (255,255,255))
-        x_pos = self.x + 5
-        y_pos = self.y + 4
+        text = button_font.render(self.text, True, (0,0,0))
+        text_rect = text.get_rect()
+        text_rect.center = (self.x + self.w/2, self.y + self.h/2)
+        pygame.draw.rect(screen, (0,0,0), self.border)
         pygame.draw.rect(screen, self.color, self.rect)
-        screen.blit(text, (x_pos, y_pos))
+        screen.blit(text, text_rect)
     def clicked(self):
-        finished = False
-
+        click = pygame.mouse.get_pressed()
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        onButton = self.x < mouse_x < self.x + self.w and self.y < mouse_y < self.y + self.h
+        if click[0] and onButton:
+            pygame.mixer.Sound.play(click_sound)
+            return True
 class Pair:
     def __init__(self, x, y):
         self.x = x
@@ -66,7 +75,6 @@ class Pair:
         new_x = self.x + other.x
         new_y = self.y + other.y
         return Pair(new_x, new_y)
-
 class Gun:
     def __init__(self):
         self.sheet = [pygame.image.load("gun-1.png"),pygame.image.load("gun-2.png")]
@@ -75,22 +83,9 @@ class Gun:
         self.position = Pair(mouse_x, mouse_y)
         self.ani_speed = 10
         self.muzzle = pygame.Rect(pygame.mouse.get_pos()[0]-(gun_dm["width"]/2)+23, pygame.mouse.get_pos()[1]-(gun_dm["height"]/2)+26, 30, 36)
-        #self.hitbox = pygame.Rect(self.position.x, self.position.y, gun_dm["width"], gun_dm["height"])
     def update(self):
         self.position = Pair(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
         self.muzzle = pygame.Rect(pygame.mouse.get_pos()[0]-(gun_dm["width"]/2)+23, pygame.mouse.get_pos()[1]-(gun_dm["height"]/2)+26, 30, 36)
-    # need to delete idle and shoot methods
-    def idle(self, x, y):
-        self.image = self.sheet[0]
-        screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
-        print("no")
-    def shoot(self, x, y):
-        self.ani_speed -= 1
-        while self.ani_speed:
-            self.image = self.sheet[1] #
-            screen.blit(self.image, (x-(gun_dm["width"]/2), y-(gun_dm["height"]/2)))
-        self.idle(x, y)
-        print("yes")
     def display(self, x, y, status):
         self.status = status
         if self.status == "shoot":
@@ -138,7 +133,6 @@ class Fly:
         pygame.mixer.Sound.play(hit_sound)
     def update(self):
         screen.blit(self.image, self.hitbox.topleft)
-
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)
@@ -146,7 +140,6 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
         screen.blit(self.image, self.rect)
-
 class Cat:
     def __init__(self):
         self.sheet = [pygame.image.load("cat-1.png"), pygame.image.load("cat-2.png"), pygame.image.load("cat-3.png"), pygame.image.load("cat-4.png")]
@@ -184,19 +177,26 @@ flies = []
 cats = []
 gun = Gun()
 score = 0
-font = pygame.font.Font("rocksalt.ttf", 36)
-start = 2000
+start = 0
 finished = False
 level = 2
-
+home = True
+info = False
+p = 20
 while True:
     screen.fill((0))
     clock.tick(200)
+    start += 1
+    print(start)
+    if p > 8:
+        if start%100 == 0:
+            p -= 1
+            print(p)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.display.quit()
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN and not finished:
+        if event.type == pygame.MOUSEBUTTONDOWN and not finished and not home and not info:
             gun.display(x, y, "shoot")
             shot = True
             pygame.mixer.Sound.play(miss_sound)
@@ -207,12 +207,45 @@ while True:
                 break
         else:
             shot = False
-    if not finished:
+    if home:
+        background = Background("outdoor-blur.png", [0,0])
+        play = Button(w/3 - 100, h/3, 200, 50, "Play")
+        about = Button(2*(w/3) - 100, h/3, 200, 50, "About")
+        play.display()
+        about.display()
+        if about.clicked():
+            home = False
+            info = True
+        if play.clicked():
+            home = False
+    if info:
+        background = Background("outdoor-blur.png", [0,0])
+        photo = pygame.image.load("photo1.jpg")
+        screen.blit(photo, (75,100))
+        names = small_font.render("Yao and Oorja", True, (255,255,255))
+        date = small_font.render("17 Dec 2017", True, (255,255,255))
+        scribble = pygame.image.load("scribble.png")
+        screen.blit(scribble, (400, 70))
+        credits = ["Music: 'B00TE' on YouTube", "Effects: soundbible.com", "Fly sprite: Shauna Lynch", "Cat sprite: Agung Nugraha"]
+        y = 140
+        for i in credits:
+            t = small_font.render(i, True, (255,255,255))
+            screen.blit(t, (475,y))
+            y += 40
+        screen.blit(names, (75,300))
+        screen.blit(date, (75,340))
+        back = Button(w/2-100, 475, 200, 50, "Back")
+        back.display()
+        if back.clicked():
+            home = True
+            info = False
+            finished = False
+    if not finished and not home and not info:
         background = Background("marketplace.png", [0,0])
         x, y = pygame.mouse.get_pos()
-        text = font.render("Score: "+str(score), True, (255,255,255))
-        screen.blit(text, (30,30))
-        if not random.randrange(50):
+        score_show = big_font.render("Score: "+str(score), True, (255,255,255))
+        screen.blit(score_show, (30,30))
+        if not random.randrange(60):
             cat = Cat()
             cats.append(cat)
         for c in cats:
@@ -226,7 +259,7 @@ while True:
             if c.alive == True and c.position.x <= w:
                 onscreen.append(c)
         cats = onscreen
-        if not random.randrange(20):
+        if not random.randrange(p):
             f = Fly()
             flies.append(f)
         for f in flies:
@@ -243,17 +276,29 @@ while True:
         flies = alive
         gun.display(x, y, "idle")
         gun.update()
-    if finished:
+    if finished and not home and not info:
         background = Background("marketplace-blur.png", [0,0])
-        losemessage = font.render("Game over!", True, (255,255,255))
+        losemessage = big_font.render("Game over!", True, (255,255,255))
+        losemessage_rect = losemessage.get_rect()
+        losemessage_rect.center = (w/2, h/2-30)
+        score_rect = score_show.get_rect()
+        score_rect.center = (w/2, h/2+25)
         fly_happy = pygame.image.load("fly-happy.png")
         scared_cat = pygame.image.load("cat-scared.png")
         screen.blit(fly_happy, (500,250))
-        screen.blit(scared_cat, (0,100))
-        screen.blit(losemessage, (300,150))
-        screen.blit(text, (320,200))
-        key = pygame.key.get_pressed()
-        if key[pygame.K_SPACE]:
+        screen.blit(scared_cat, (-20,120))
+        screen.blit(losemessage, losemessage_rect)
+        screen.blit(score_show, score_rect)
+        restart_button = Button(w/2-105, 50, 210, 60, "Play Again")
+        restart_button.display()
+        if restart_button.clicked():
             score = 0
+            p = 20
+            start = 0
             finished = False
+        back = Button(w/2-50,130, 100, 40, "Home")
+        back.display()
+        if back.clicked():
+            home = True
+            info = False
     pygame.display.update()
