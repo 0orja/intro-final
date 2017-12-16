@@ -241,7 +241,7 @@ while True:
             info = False
             finished = False
     if not finished and not home and not info:
-        background = Background("marketplace.png", [0,0])
+        background = Background("d2-blur1.png", [0,0])
         x, y = pygame.mouse.get_pos()
         score_show = big_font.render("Score: "+str(score), True, (255,255,255))
         screen.blit(score_show, (30,30))
@@ -277,7 +277,7 @@ while True:
         gun.display(x, y, "idle")
         gun.update()
     if finished and not home and not info:
-        background = Background("marketplace-blur.png", [0,0])
+        background = Background("d2-blur2.png", [0,0])
         losemessage = big_font.render("Game over!", True, (255,255,255))
         losemessage_rect = losemessage.get_rect()
         losemessage_rect.center = (w/2, h/2-30)
