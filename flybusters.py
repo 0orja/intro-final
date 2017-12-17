@@ -283,6 +283,8 @@ while True: #the main program
             if f.alive == True:
                 alive.append(f)
         flies = alive #same list updating for flies
+        if len(alive) > 100:
+            finished = True
         gun.display(x, y, "idle")
         gun.update()
     if finished and not home and not info: #if the game ends, the score is displayed and buttons for next action
