@@ -254,7 +254,7 @@ while True: #the main program
         x, y = pygame.mouse.get_pos()
         score_show = big_font.render("Score: "+str(score), True, (255,255,255))
         screen.blit(score_show, (30,30))
-        if not random.randrange(50):
+        if not random.randrange(30):
             cat = Cat()
             cats.append(cat)
         for c in cats:
