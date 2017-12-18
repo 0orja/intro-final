@@ -67,7 +67,7 @@ class Button: #A Button class allows users to navigate to the home page, about p
     def display(self):
         text = button_font.render(self.text, True, (0,0,0))
         text_rect = text.get_rect()
-        text_rect.center = (self.x + self.w/2, self.y + self.h/2)
+        text_rect.center = (self.x + self.w/2, self.y + self.h/2) #matches the center of text with center of rectangle
         pygame.draw.rect(screen, (0,0,0), self.border)
         pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(text, text_rect)
@@ -112,7 +112,7 @@ class Fly: #a list of 4 images of the fly which is iterated over to created the 
         self.ani_pos = 0
         self.image = self.sheet[self.ani_pos]
         self.ani_speed = 5
-        self.position = Pair(random.randint(0,w-40), random.randint(0,h-40))
+        self.position = Pair(random.randint(0,w-40), random.randint(0,h-40)) #prevents flies from being trapped at edge of screen
         self.velocity = Pair(random.randint(1,10), random.randint(1,10))
         self.dimensions = Pair(fly_dm["width"], fly_dm["height"])
         self.hitbox = pygame.Rect(self.position.x, self.position.y, self.dimensions.x, self.dimensions.y)
@@ -123,9 +123,9 @@ class Fly: #a list of 4 images of the fly which is iterated over to created the 
         if self.alive == True:
             self.position += self.velocity
             self.hitbox.move_ip(self.velocity.x, self.velocity.y)
-            if self.hitbox.right > w-40 or self.hitbox.left < 0:
+            if self.hitbox.right > w or self.hitbox.left < 0:
                 self.velocity.x = -self.velocity.x
-            if self.hitbox.top < 0 or self.hitbox.bottom > h-40:
+            if self.hitbox.top < 0 or self.hitbox.bottom > h:
                 self.velocity.y = - self.velocity.y
             self.ani_speed -= 1
             if self.ani_speed == 0: #This makes the image change only every 5 loops
@@ -209,6 +209,9 @@ while True: #the main program
         else:
             shot = False
     if home: #the home button is hit
+        finished = False
+        p = 20
+        score = 0
         background = Background("outdoor-blur.png", [0,0])
         play = Button(w/3 - 100, 3*(h/4), 200, 50, "Play")
         about = Button(2*(w/3) - 100, 3*(h/4), 200, 50, "About")
@@ -223,6 +226,7 @@ while True: #the main program
             info = True
         if play.clicked():
             home = False
+
     if info: #the info button is hit
         background = Background("outdoor-blur.png", [0,0])
         photo = pygame.image.load("photo1.jpg")
@@ -236,7 +240,7 @@ while True: #the main program
         for i in credits:
             t = small_font.render(i, True, (255,255,255))
             screen.blit(t, (475,y))
-            y += 40
+            y += 40 #blit each line 40px apart
         screen.blit(names, (75,300))
         screen.blit(date, (75,340))
         back = Button(w/2-100, 475, 200, 50, "Back")
@@ -244,7 +248,6 @@ while True: #the main program
         if back.clicked():
             home = True
             info = False
-            finished = False
     if not finished and not home and not info: # game plays
         start += 1
         if p > 8: #Only increases it until a certain point
@@ -254,7 +257,7 @@ while True: #the main program
         x, y = pygame.mouse.get_pos()
         score_show = big_font.render("Score: "+str(score), True, (255,255,255))
         screen.blit(score_show, (30,30))
-        if not random.randrange(30):
+        if not random.randrange(40):
             cat = Cat()
             cats.append(cat)
         for c in cats:
