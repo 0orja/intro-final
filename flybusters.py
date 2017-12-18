@@ -9,7 +9,7 @@ This final project is done in pygame. The goal is to "kill" flies in the D2 camp
 Flies appear at a gradually increasing probability and bounce around on the screen.
 If a fly is hit by the gun, a dead fly image is displayed and it disappears.
 Cats also appear at random and walk across the screen.
-Game ends when the gun accidentally hits a cat.
+Game ends when the gun accidentally hits a cat, or when the number of flies alive exceeds 70.
 
 Controls:
 Mouse movement controls the gun and a click shoots the gun.
@@ -286,7 +286,7 @@ while True: #the main program
             if f.alive == True:
                 alive.append(f)
         flies = alive #same list updating for flies
-        if len(alive) > 100:
+        if len(alive) > 70: #game also ends when there are too many flies
             finished = True
         gun.display(x, y, "idle")
         gun.update()
